@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>犬类基因随机抽选工具 - 长谷部 × 八丈鸫</title>
+    <style>
+        :root {
+            --bg: #f7f1e8;
+            --card-bg: #ffffff;
+            --primary: #8B6B4D;
+            --primary-dark: #6D5138;
+            --accent: #D4956A;
+            --accent-light: #F0DCC8;
+            --text: #3E2E23;
+            --text-light: #7A6A5C;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --fur-color: #C49A6C;
+            --eye-color: #7B68AE;
+            --personality-color: #6B8E5A;
+            --body-color: #D4845A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(212, 149, 106, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(139, 107, 77, 0.06) 0%, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 20px;
+        }
+
+        .header-icon {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 8px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+
+        .header .breed-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 6px 20px;
+            background: var(--accent-light);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* 狗狗信息卡片 */
+        .breed-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .breed-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--accent);
+        }
+
+        .breed-card:nth-child(2) {
+            border-left-color: #5A7A8E;
+        }
+
+        .breed-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .breed-card .breed-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breed-card .breed-name .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .breed-card:nth-child(1) .breed-name .dot {
+            background: var(--accent);
+        }
+        .breed-card:nth-child(2) .breed-name .dot {
+            background: #5A7A8E;
+        }
+
+        .breed-card .gene-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .breed-card .gene-group .label {
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+        .breed-card .gene-group .item {
+            background: #f5f0eb;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        /* 按钮区域 */
+        .button-area {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .btn-draw {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(139, 107, 77, 0.35);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .btn-draw::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .btn-draw:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-draw:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 107, 77, 0.45);
+        }
+
+        .btn-draw:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(139, 107, 77, 0.3);
+        }
+
+        .btn-draw .icon {
+            font-size: 1.4rem;
+        }
+
+        /* 结果区域 */
+        .result-area {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px 28px;
+            box-shadow: var(--shadow);
+            min-height: 200px;
+            transition: var(--transition);
+        }
+
+        .result-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .result-placeholder .paw {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px dashed #e8ddd0;
+        }
+
+        .result-header .title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-header .count-badge {
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .result-col {
+            background: #fdfaf7;
+            border-radius: var(--radius-sm);
+            padding: 18px 16px;
+            border: 1px solid #eee5da;
+            transition: var(--transition);
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .result-col:nth-child(1) {
+            animation-delay: 0.05s;
+            border-top: 3px solid var(--fur-color);
+        }
+        .result-col:nth-child(2) {
+            animation-delay: 0.15s;
+            border-top: 3px solid var(--eye-color);
+        }
+        .result-col:nth-child(3) {
+            animation-delay: 0.25s;
+            border-top: 3px solid var(--personality-color);
+        }
+        .result-col:nth-child(4) {
+            animation-delay: 0.35s;
+            border-top: 3px solid var(--body-color);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-col .col-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-col .col-title .emoji {
+            font-size: 1.2rem;
+        }
+
+        .result-col .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+        }
+
+        .result-col .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            animation: tagPop 0.4s ease-out both;
+        }
+
+        @keyframes tagPop {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tag-fur {
+            background: #f5e6d3;
+            color: #8B6B4D;
+            animation-delay: 0.1s;
+        }
+        .tag-eye {
+            background: #e8e0f0;
+            color: #5B4A8A;
+            animation-delay: 0.2s;
+        }
+        .tag-personality {
+            background: #e4ecd8;
+            color: #4A6B3A;
+            animation-delay: 0.3s;
+        }
+        .tag-body {
+            background: #fae8dc;
+            color: #B05A2E;
+            animation-delay: 0.4s;
+        }
+
+        /* 响应式 */
+        @media (max-width: 700px) {
+            .breed-info {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            .btn-draw {
+                padding: 14px 32px;
+                font-size: 1rem;
+            }
+            .result-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .result-area {
+                padding: 20px 16px;
+            }
+            .result-col {
+                padding: 14px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .header-icon {
+                font-size: 40px;
+            }
+            .btn-draw {
+                padding: 12px 24px;
+                font-size: 0.95rem;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <span class="header-icon">🐕‍🦺</span>
+            <h1>犬类基因随机抽选工具</h1>
+            <p class="subtitle">模拟杂交后代基因组合</p>
+            <div class="breed-tag">
+                <span>🐕 长谷部</span>
+                <span>×</span>
+                <span>🐕 八丈鸫</span>
+            </div>
+        </header>
+
+        <!-- 两种狗基因信息 -->
+        <div class="breed-info">
+            <div class="breed-card">
+                <div class="breed-name">
+                    <span class="dot"></span>
+                    长谷部
+                </div>
+                <div class="gene-group">
+                    <span><span class="label">毛色：</span></span>
+                    <span class="item">黑色毛发</span>
+                    <span class="item">棕色毛发</span>
+                    <span class="item">铁包金色毛发</span>
+                    <span class="item">双色毛发</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">瞳色：</span></span>
+                    <span class="item">紫瞳</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">性格：</span></span>
+                    <span class="item">沉稳</span>
+                    <span class="item">温顺</span>
+                    <span class="item">聪明</span>
+                    <span class="item">警惕</span>
+                    <span class="item">多疑</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">体型：</span></span>
+                    <span class="item">弓背</span>
+                    <span class="item">短毛</span>
+                    <span class="item">长毛</span>
+                </div>
+            </div>
+            <div class="breed-card">
+                <div class="breed-name">
+                    <span class="dot"></span>
+                    八丈鸫
+                </div>
+                <div class="gene-group">
+                    <span><span class="label">毛色：</span></span>
+                    <span class="item">黑白棕三色毛发</span>
+                    <span class="item">白棕毛发</span>
+                    <span class="item">陨石毛发</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">瞳色：</span></span>
+                    <span class="item">蓝瞳</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">性格：</span></span>
+                    <span class="item">活泼</span>
+                    <span class="item">易怒</span>
+                    <span class="item">忠诚</span>
+                    <span class="item">叛逆</span>
+                </div>
+                <div class="gene-group" style="margin-top:6px;">
+                    <span><span class="label">体型：</span></span>
+                    <span class="item">大脚</span>
+                    <span class="item">长毛</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 抽取按钮 -->
+        <div class="button-area">
+            <button class="btn-draw" id="btnDraw" onclick="drawGenes()">
+                <span class="icon">🎲</span>
+                <span>开始抽取</span>
+            </button>
+        </div>
+
+        <!-- 结果展示区域 -->
+        <div class="result-area" id="resultArea">
+            <div class="result-placeholder" id="placeholder">
+                <span class="paw">🐾</span>
+                <p>点击上方按钮，<br>抽取小狗的基因组合吧！</p>
+            </div>
+            <div id="resultContent" style="display: none;">
+                <div class="result-header">
+                    <span class="title">🧬 本次抽取结果</span>
+                    <span class="count-badge" id="drawCount">第 1 次抽取</span>
+                </div>
+                <div class="result-grid" id="resultGrid">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 基因数据定义 ==========
+        const geneData = {
+            // 长谷部的基因
+            hasebe: {
+                furColors: ['黑色毛发', '棕色毛发', '铁包金色毛发', '双色毛发'],
+                eyeColors: ['紫瞳'],
+                personalities: ['沉稳', '温顺', '聪明', '警惕', '多疑'],
+                bodyTypes: ['弓背', '短毛', '长毛'],
+            },
+            // 八丈鸫的基因
+            hachijo: {
+                furColors: ['黑白棕三色毛发', '白棕毛发', '陨石毛发'],
+                eyeColors: ['蓝瞳'],
+                personalities: ['活泼', '易怒', '忠诚', '叛逆'],
+                bodyTypes: ['大脚', '长毛'],
+            }
+        };
+
+        // 合并去重后的基因池
+        const genePool = {
+            // 毛色：合并两边，无重复
+            furColors: [...new Set([...geneData.hasebe.furColors, ...geneData.hachijo.furColors])],
+            // 瞳色：合并两边，紫瞳 + 蓝瞳
+            eyeColors: [...new Set([...geneData.hasebe.eyeColors, ...geneData.hachijo.eyeColors])],
+            // 性格：合并两边，无重复
+            personalities: [...new Set([...geneData.hasebe.personalities, ...geneData.hachijo.personalities])],
+            // 体型：合并两边，去重（"长毛"重复）
+            bodyTypes: [...new Set([...geneData.hasebe.bodyTypes, ...geneData.hachijo.bodyTypes])],
+        };
+
+        // 抽取计数器
+        let drawCounter = 0;
+
+        /**
+         * 从数组中随机抽取 n 个不重复的元素
+         * @param {Array} list - 源数组
+         * @param {number} count - 抽取数量
+         * @returns {Array} 抽取结果
+         */
+        function getRandomItems(list, count) {
+            const shuffled = [...list];
+            // Fisher-Yates 洗牌算法
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, Math.min(count, shuffled.length));
+        }
+
+        /**
+         * 随机获取 1 到 3 之间的整数（均匀分布）
+         * @returns {number} 1、2 或 3
+         */
+        function getRandomCount() {
+            return Math.floor(Math.random() * 3) + 1;
+        }
+
+        /**
+         * 随机抽取瞳色（特殊规则：两边各一种，只能选一个）
+         * @returns {string} 抽取到的瞳色
+         */
+        function drawEyeColor() {
+            const eyeColors = genePool.eyeColors;
+            return eyeColors[Math.floor(Math.random() * eyeColors.length)];
+        }
+
+        /**
+         * 执行基因抽取
+         */
+        function drawGenes() {
+            drawCounter++;
+
+            // 抽取毛色：1-3个
+            const furCount = getRandomCount();
+            const furResult = getRandomItems(genePool.furColors, furCount);
+
+            // 抽取瞳色：固定1个
+            const eyeResult = [drawEyeColor()];
+
+            // 抽取性格：1-3个
+            const personalityCount = getRandomCount();
+            const personalityResult = getRandomItems(genePool.personalities, personalityCount);
+
+            // 抽取体型：1-3个
+            const bodyCount = getRandomCount();
+            const bodyResult = getRandomItems(genePool.bodyTypes, bodyCount);
+
+            // 渲染结果
+            renderResult(furResult, eyeResult, personalityResult, bodyResult);
+        }
+
+        /**
+         * 渲染抽取结果到页面
+         */
+        function renderResult(furResult, eyeResult, personalityResult, bodyResult) {
+            // 隐藏占位符，显示结果
+            const placeholder = document.getElementById('placeholder');
+            const resultContent = document.getElementById('resultContent');
+            if (placeholder) placeholder.style.display = 'none';
+            if (resultContent) resultContent.style.display = 'block';
+
+            // 更新抽取次数
+            const countBadge = document.getElementById('drawCount');
+            if (countBadge) {
+                countBadge.textContent = `第 ${drawCounter} 次抽取`;
+            }
+
+            // 生成结果网格
+            const grid = document.getElementById('resultGrid');
+            grid.innerHTML = '';
+
+            // 毛色栏
+            grid.appendChild(createResultColumn(
+                '🎨',
+                '毛色',
+                furResult,
+                'tag-fur'
+            ));
+
+            // 瞳色栏
+            grid.appendChild(createResultColumn(
+                '👁️',
+                '瞳色',
+                eyeResult,
+                'tag-eye'
+            ));
+
+            // 性格栏
+            grid.appendChild(createResultColumn(
+                '💭',
+                '性格',
+                personalityResult,
+                'tag-personality'
+            ));
+
+            // 体型栏
+            grid.appendChild(createResultColumn(
+                '📏',
+                '体型',
+                bodyResult,
+                'tag-body'
+            ));
+        }
+
+        /**
+         * 创建结果栏目元素
+         * @param {string} emoji - 栏目图标
+         * @param {string} title - 栏目名称
+         * @param {Array} items - 抽取到的特征列表
+         * @param {string} tagClass - 标签CSS类名
+         * @returns {HTMLElement} 栏目DOM元素
+         */
+        function createResultColumn(emoji, title, items, tagClass) {
+            const col = document.createElement('div');
+            col.className = 'result-col';
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'col-title';
+            titleEl.innerHTML = `<span class="emoji">${emoji}</span> ${title}`;
+            col.appendChild(titleEl);
+
+            const tagsContainer = document.createElement('div');
+            tagsContainer.className = 'tags';
+
+            items.forEach((item, index) => {
+                const tag = document.createElement('span');
+                tag.className = `tag ${tagClass}`;
+                tag.textContent = item;
+                // 为每个标签设置微小的动画延迟
+                tag.style.animationDelay = `${index * 0.08}s`;
+                tagsContainer.appendChild(tag);
+            });
+
+            col.appendChild(tagsContainer);
+            return col;
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 可以在这里添加一些初始化的提示
+            console.log('🐕 犬类基因随机抽选工具已加载');
+            console.log('📊 基因池统计：');
+            console.log(`  毛色：${genePool.furColors.length} 种`);
+            console.log(`  瞳色：${genePool.eyeColors.length} 种`);
+            console.log(`  性格：${genePool.personalities.length} 种`);
+            console.log(`  体型：${genePool.bodyTypes.length} 种`);
+        });
+
+        // 键盘快捷键支持（按空格键或回车键触发抽取）
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space' || event.code === 'Enter') {
+                const btn = document.getElementById('btnDraw');
+                // 避免页面滚动
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                }
+                // 如果焦点不在按钮上，也可以触发
+                if (document.activeElement !== btn) {
+                    drawGenes();
+                    // 给按钮一个视觉反馈
+                    btn.style.transform = 'scale(0.97)';
+                    setTimeout(() => {
+                        btn.style.transform = '';
+                    }, 150);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
